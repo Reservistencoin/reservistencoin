@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+#
+#  reservistencoind The reservistencoin core server.
+#
+#
+# chkconfig: 345 80 20
+# description: reservistencoind
+# processname: reservistencoind
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+# you can override defaults in /etc/sysconfig/reservistencoind, see below
+if [ -f /etc/sysconfig/reservistencoind ]; then
+        . /etc/sysconfig/reservistencoind
+fi
+
+RETVAL=0
+
+prog=reservistencoind
+# you can override the lockfile via RESERVISTENCOIND_LOCKFILE in /etc/sysconfig/reservistencoind
+lockfile=${RESERVISTENCOIND_LOCKFILE-/var/lock/subsys/reservistencoind}
+
+# reservistencoind defaults to /usr/bin/reservistencoind, override with RESERVISTENCOIND_BIN
+reservistencoind=${RESERVISTENCOIND_BIN-/usr/bin/reservistencoind}
+
+# reservistencoind opts default to -disablewallet, override with RESERVISTENCOIND_OPTS
+reservistencoind_opts=${RESERVISTENCOIND_OPTS--disablewallet}
+
+start() {
+    echo -n $"Starting $prog: "
+    daemon $DAEMONOPTS $reservistencoind $reservistencoind_opts
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $lockfile
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc $prog -t600
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $lockfile
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status $prog
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: service $prog {start|stop|status|restart}"
+        exit 1
+        ;;
+esac

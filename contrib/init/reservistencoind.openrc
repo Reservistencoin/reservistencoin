@@ -1,0 +1,93 @@
+#!/sbin/openrc-run
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/reservistencoin/.reservistencoin" ]; then
+	RESERVISTENCOIND_DEFAULT_DATADIR="/var/lib/reservistencoin/.reservistencoin"
+else
+	RESERVISTENCOIND_DEFAULT_DATADIR="/var/lib/reservistencoind"
+fi
+
+RESERVISTENCOIND_CONFIGFILE=${RESERVISTENCOIND_CONFIGFILE:-/etc/reservistencoin/reservistencoin.conf}
+RESERVISTENCOIND_PIDDIR=${RESERVISTENCOIND_PIDDIR:-/var/run/reservistencoind}
+RESERVISTENCOIND_PIDFILE=${RESERVISTENCOIND_PIDFILE:-${RESERVISTENCOIND_PIDDIR}/reservistencoind.pid}
+RESERVISTENCOIND_DATADIR=${RESERVISTENCOIND_DATADIR:-${RESERVISTENCOIND_DEFAULT_DATADIR}}
+RESERVISTENCOIND_USER=${RESERVISTENCOIND_USER:-${RESERVISTENCOIN_USER:-reservistencoin}}
+RESERVISTENCOIND_GROUP=${RESERVISTENCOIND_GROUP:-reservistencoin}
+RESERVISTENCOIND_BIN=${RESERVISTENCOIND_BIN:-/usr/bin/reservistencoind}
+RESERVISTENCOIND_NICE=${RESERVISTENCOIND_NICE:-${NICELEVEL:-0}}
+RESERVISTENCOIND_OPTS="${RESERVISTENCOIND_OPTS:-${RESERVISTENCOIN_OPTS}}"
+
+name="ReservistenCoin Core Daemon"
+description="ReservistenCoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/reservistencoind"
+command_args="-pid=\"${RESERVISTENCOIND_PIDFILE}\" \
+		-conf=\"${RESERVISTENCOIND_CONFIGFILE}\" \
+		-datadir=\"${RESERVISTENCOIND_DATADIR}\" \
+		-daemon \
+		${RESERVISTENCOIND_OPTS}"
+
+required_files="${RESERVISTENCOIND_CONFIGFILE}"
+start_stop_daemon_args="-u ${RESERVISTENCOIND_USER} \
+			-N ${RESERVISTENCOIND_NICE} -w 2000"
+pidfile="${RESERVISTENCOIND_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${RESERVISTENCOIND_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${RESERVISTENCOIND_USER}:${RESERVISTENCOIND_GROUP}" \
+	"${RESERVISTENCOIND_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${RESERVISTENCOIND_USER}:${RESERVISTENCOIND_GROUP}" \
+	"${RESERVISTENCOIND_PIDDIR}"
+
+	checkpath -f \
+	-o "${RESERVISTENCOIND_USER}:${RESERVISTENCOIND_GROUP}" \
+	-m 0660 \
+	"${RESERVISTENCOIND_CONFIGFILE}"
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if grep -qs '^rpcuser=' "${RESERVISTENCOIND_CONFIGFILE}" && \
+		! grep -qs '^rpcpassword=' "${RESERVISTENCOIND_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run reservistencoind."
+		eerror "The setting must appear in ${RESERVISTENCOIND_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following "
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"ReservistenCoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

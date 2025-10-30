@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: ReservistenCoin Core Security Policy
+    url: https://github.com/reservistencoin/reservistencoin/blob/master/SECURITY.md
+    about: View security policy
+  - name: ReservistenCoin Core Developers
+    url: https://bitcoincore.org
+    about: ReservistenCoin Core homepage

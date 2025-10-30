@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[o:reservistencoin:p:reservistencoin:r:qt-translation-025x]
+file_filter = src/qt/locale/reservistencoin_<lang>.xlf
+source_file = src/qt/locale/reservistencoin_en.xlf
+source_lang = en
