@@ -1,78 +1,146 @@
-ReservistenCoin Core integration/staging tree
-=====================================
+# 🪙 ReservistenCoin (RVC)
 
-https://bitcoincore.org
+**ReservistenCoin (RVC)** ist eine Bitcoin-ähnliche, militärisch inspirierte Kryptowährung, die auf dem **SHA-256 Proof-of-Work Algorithmus** basiert.  
+Ziel ist es, Kameradschaft, Ehre und Tradition in das digitale Zeitalter zu übertragen.  
+Jeder „Kamerad“ steht für Leistung, Vertrauen und Gemeinschaft — ganz im Sinne unserer Reservistenkultur.
 
-For an immediately usable, binary version of the ReservistenCoin Core software, see
-https://bitcoincore.org/en/download/.
+---
 
-What is ReservistenCoin Core?
----------------------
+## ⚙️ Technische Eigenschaften
 
-ReservistenCoin Core connects to the ReservistenCoin peer-to-peer network to download and fully
-validate blocks and transactions. It also includes a wallet and graphical user
-interface, which can be optionally built.
+| Eigenschaft              | Wert |
+|---------------------------|------|
+| **Algorithmus**           | SHA-256 (Proof-of-Work) |
+| **Block Reward**          | 50 RVC |
+| **Halving**               | Alle 210.000 Blöcke |
+| **Max. Supply**           | 22.050.000 RVC |
+| **Premine**               | 1.050.000 RVC |
+| **Coin Unit**             | `Kamerad` |
+| **Target Spacing**        | 10 Minuten |
+| **Target Timespan**       | 120 Minuten |
+| **Difficulty Adjustment** | Dynamisch |
+| **Coinbase Maturity**     | 100 + 1 Blöcke |
+| **Transaction Confirmations** | 6 |
+| **RPC Port**              | 24877 |
+| **P2P Port**              | 24878 |
+| **Genesis Timestamp**     | “The Times 12/10/2025 — Veterans stand together for peace and freedom.” |
 
-Further information about ReservistenCoin Core is available in the [doc folder](/doc).
+---
 
-License
--------
+## 🧩 Projektstruktur
 
-ReservistenCoin Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
-information or see https://opensource.org/licenses/MIT.
+reservistencoin/
+├── src/ # Core-Quellcode
+├── share/ # Icons, Grafiken, Ressourcen
+├── qt/ # Qt-Wallet (GUI)
+├── doc/ # Dokumentation
+├── contrib/ # Build-Skripte und Tools
+├── README.md # Diese Datei
+├── LICENSE # Lizenz (MIT)
+└── autogen.sh, configure, makefile.in ...
 
-Development Process
--------------------
+---
 
-The `master` branch is regularly built (see `doc/build-*.md` for instructions) and tested, but it is not guaranteed to be
-completely stable. [Tags](https://github.com/reservistencoin/reservistencoin/tags) are created
-regularly from release branches to indicate new official, stable release versions of ReservistenCoin Core.
+## 🧱 Build-Anleitung (Linux / Windows / Raspberry Pi)
 
-The https://github.com/reservistencoin-core/gui repository is used exclusively for the
-development of the GUI. Its master branch is identical in all monotree
-repositories. Release branches and tags do not exist, so please do not fork
-that repository unless it is for development reasons.
+### 🔹 Linux (Ubuntu 22.04 / Debian-basiert)
+```bash
+sudo apt update
+sudo apt install -y build-essential autoconf automake libtool pkg-config \
+  libboost-all-dev libevent-dev libminiupnpc-dev libssl-dev \
+  qtbase5-dev qttools5-dev-tools git
 
-The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md)
-and useful hints for developers can be found in [doc/developer-notes.md](doc/developer-notes.md).
+git clone https://github.com/reservistencoin/reservistencoin.git
+cd reservistencoin
+./autogen.sh
+./configure
+make -j$(nproc)
 
-Testing
--------
+---
 
-Testing and code review is the bottleneck for development; we get more pull
-requests than we can review and test on short notice. Please be patient and help out by testing
-other people's pull requests, and remember this is a security-critical project where any mistake might cost people
-lots of money.
+🌍 Netzwerk & Node
 
-### Automated Testing
+| Node-Typ         | Host / IP                  | Beschreibung |
+| ---------------- | -------------------------- | ------------ |
+| **Main Seed**    | seed1.reservistencoin.de   | Haupt-Node   |
+| **Backup Seed**  | seed2.reservistencoin.de   | Fallback     |
+| **Testnet Seed** | testnet.reservistencoin.de | Testnetzwerk |
 
-Developers are strongly encouraged to write [unit tests](src/test/README.md) for new code, and to
-submit new unit tests for old code. Unit tests can be compiled and run
-(assuming they weren't disabled in configure) with: `make check`. Further details on running
-and extending unit tests can be found in [/src/test/README.md](/src/test/README.md).
+---
 
-There are also [regression and integration tests](/test), written
-in Python.
-These tests can be run (if the [test dependencies](/test) are installed) with: `test/functional/test_runner.py`
+💎 Wallets & Explorer
 
-The CI (Continuous Integration) systems make sure that every pull request is built for Windows, Linux, and macOS,
-and that unit/sanity tests are run automatically.
+| Tool                                       | Beschreibung                                                       | Status        |
+| ------------------------------------------ | ------------------------------------------------------------------ | ------------- |
+| **reservistencoin-qt**                     | Desktop-Wallet mit GUI                                             | ✅             |
+| **reservistencoind / reservistencoin-cli** | Fullnode + CLI                                                     | ✅             |
+| **Block Explorer**                         | [explorer.reservistencoin.de](https://explorer.reservistencoin.de) | 🛠️ In Arbeit |
+| **Webwallet / Faucet**                     | [wallet.reservistencoin.de](https://wallet.reservistencoin.de)     | 🛠️ Geplant   |
 
-### Manual Quality Assurance (QA) Testing
+---
 
-Changes should be tested by somebody other than the developer who wrote the
-code. This is especially important for large or high-risk changes. It is useful
-to add a test plan to the pull request description if testing the changes is
-not straightforward.
+⛏️ Mining
+CPU-Mining (Testnet)
+./reservistencoin-cli generatetoaddress 1 <deineRVCAdresse>
 
-Translations
-------------
+ASIC/Pool-Mining
 
-Changes to translations as well as new translations can be submitted to
-[ReservistenCoin Core's Transifex page](https://www.transifex.com/reservistencoin/reservistencoin/).
+Verbinde dich mit einem öffentlichen Pool (z. B.):
 
-Translations are periodically pulled from Transifex and merged into the git repository. See the
-[translation process](doc/translation_process.md) for details on how this works.
+stratum+tcp://pool.reservistencoin.de:3333
 
-**Important**: We do not accept translation changes as GitHub pull requests because the next
-pull from Transifex would automatically overwrite them again.
+---
+
+🪙 Block Belohnungen (Reward Schedule)
+
+
+| Epoche | Blockhöhe         | Belohnung (RVC) |
+| ------ | ----------------- | --------------- |
+| 1      | 0 – 209,999       | 50              |
+| 2      | 210,000 – 419,999 | 25              |
+| 3      | 420,000 – 629,999 | 12.5            |
+| 4      | usw.              | ...             |
+
+Letzter Block mit Reward: ca. Block 6,930,000 (~131 Jahre Laufzeit)
+
+---
+
+🔒 Sicherheit
+
+SHA-256 Hashing wie Bitcoin
+
+Coinbase Maturity: 100 + 1 Blöcke
+
+Netzwerk validiert automatisch Difficulty & Timestamp
+
+Kein zentraler Einfluss, dezentrales Peer-to-Peer-System
+
+Prüfsummen, Signaturen & Safe RPC-Mechanismen integriert
+
+---
+
+🧭 Projektlinks :
+
+🌐 Website: https://reservistencoin.de
+
+💬 Bitcointalk: (folgt)
+
+🧰 GitHub: https://github.com/reservistencoin/reservistencoin
+
+⚙️ Explorer: https://explorer.reservistencoin.de
+
+💦 Faucet: (in Planung)
+
+---
+
+📜 Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz.
+Details siehe LICENSE.
+
+---
+
+🪖 Motto
+
+„Treue, Kameradschaft und Verantwortung – auch in der digitalen Welt.“
+
