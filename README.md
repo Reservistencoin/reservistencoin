@@ -64,6 +64,7 @@ make -j$(nproc)
 | ---------------- | -------------------------- | ------------ |
 | **Main Seed**    | seed1.reservistencoin.de   | Haupt-Node   |
 | **Backup Seed**  | seed2.reservistencoin.de   | Fallback     |
+| **Backup Seed**  | seed3.reservistencoin.de   | Fallback     |
 | **Testnet Seed** | testnet.reservistencoin.de | Testnetzwerk |
 
 ---
@@ -121,9 +122,9 @@ Prüfsummen, Signaturen & Safe RPC-Mechanismen integriert
 
 🧭 Projektlinks :
 
-🌐 Website: https://reservistencoin.de
+🌐 Website: https://www.reservistencoin.de
 
-💬 Bitcointalk: (folgt)
+💬 Bitcointalk: https://bitcointalk.org/index.php?topic=5565354
 
 🧰 GitHub: https://github.com/reservistencoin/reservistencoin
 
